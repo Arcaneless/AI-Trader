@@ -21,6 +21,10 @@ AGENT_REGISTRY = {
         "module": "agent.base_agent.base_agent_hour",
         "class": "BaseAgent_Hour"
     },
+    "BaseCryptoAgent": {
+        "module": "agent.base_agent.base_crypto_agent",
+        "class": "BaseCryptoAgent"
+    },
 }
 
 
@@ -106,6 +110,18 @@ async def main(config_path=None):
     
     # Get Agent type
     agent_type = config.get("agent_type", "BaseAgent")
+    if agent_type == "BaseCryptoAgent":
+        crypto_cfg = config.get("crypto_agent_config", {})
+        for env_key, cfg_key in [
+            ("CRYPTO_PAIR", "crypto_pair"),
+            ("CRYPTO_HISTORY_LIMIT", "history_limit"),
+            ("CRYPTO_TIMEFRAME", "timeframe"),
+            ("CRYPTO_BASE_SYMBOL", "base_symbol"),
+        ]:
+            if cfg_key in crypto_cfg and crypto_cfg[cfg_key] is not None:
+                os.environ[env_key] = str(crypto_cfg[cfg_key])
+        if "CRYPTO_BASE_SYMBOL" not in os.environ and "crypto_pair" in crypto_cfg:
+            os.environ["CRYPTO_BASE_SYMBOL"] = crypto_cfg["crypto_pair"].split("/")[0]
     try:
         AgentClass = get_agent_class(agent_type)
     except (ValueError, ImportError, AttributeError) as e:
@@ -201,21 +217,26 @@ async def main(config_path=None):
         # Get log path configuration
         log_path = log_config.get("log_path", "./data/agent_data")
 
+        symbols_arg = None if agent_type == "BaseCryptoAgent" else all_nasdaq_100_symbols
+        agent_kwargs = dict(
+            signature=signature,
+            basemodel=basemodel,
+            stock_symbols=symbols_arg,
+            log_path=log_path,
+            max_steps=max_steps,
+            max_retries=max_retries,
+            base_delay=base_delay,
+            initial_cash=initial_cash,
+            init_date=INIT_DATE,
+            openai_base_url=openai_base_url,
+            openai_api_key=openai_api_key,
+        )
+        if agent_type == "BaseCryptoAgent":
+            agent_kwargs.update(config.get("crypto_agent_config", {}))
+
         try:
             # Dynamically create Agent instance
-            agent = AgentClass(
-                signature=signature,
-                basemodel=basemodel,
-                stock_symbols=all_nasdaq_100_symbols,
-                log_path=log_path,
-                max_steps=max_steps,
-                max_retries=max_retries,
-                base_delay=base_delay,
-                initial_cash=initial_cash,
-                init_date=INIT_DATE,
-                openai_base_url=openai_base_url,
-                openai_api_key=openai_api_key
-            )
+            agent = AgentClass(**agent_kwargs)
             
             print(f"✅ {agent_type} instance created successfully: {agent}")
             
@@ -259,4 +280,3 @@ if __name__ == "__main__":
         print(f"📄 Using default configuration file: configs/default_config.json")
     
     asyncio.run(main(config_path))
-

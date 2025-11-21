@@ -1,6 +1,6 @@
 # 🤖 Agent System Overview
 
-This note describes how the AI-Trader agent layer is wired together and how to extend it. It focuses on the code paths that instantiate `BaseAgent` and `BaseAgent_Hour`, the runtime artefacts they create, and the configuration knobs you can adjust.
+This note describes how the AI-Trader agent layer is wired together and how to extend it. It focuses on the code paths that instantiate `BaseAgent` and `BaseAgent_Hour`, the runtime artefacts they create, and the configuration knobs you can adjust. Use uv as the package manager for Python.
 
 ## Key Modules
 - `main.py` – entrypoint that loads configs, resolves the agent type via `AGENT_REGISTRY`, and drives each enabled model through the full trading range.

@@ -24,7 +24,9 @@ class MCPServiceManager:
             'math': int(os.getenv('MATH_HTTP_PORT', '8000')),
             'search': int(os.getenv('SEARCH_HTTP_PORT', '8001')),
             'trade': int(os.getenv('TRADE_HTTP_PORT', '8002')),
-            'price': int(os.getenv('GETPRICE_HTTP_PORT', '8003'))
+            'price': int(os.getenv('GETPRICE_HTTP_PORT', '8003')),
+            'crypto_trade': int(os.getenv('CRYPTO_TRADE_HTTP_PORT', '8010')),
+            'crypto_price': int(os.getenv('CRYPTO_PRICE_HTTP_PORT', '8011')),
         }
         
         # Service configurations
@@ -48,7 +50,17 @@ class MCPServiceManager:
                 'script': 'tool_get_price_local.py',
                 'name': 'LocalPrices',
                 'port': self.ports['price']
-            }
+            },
+            'crypto_trade': {
+                'script': 'tool_trade_crypto.py',
+                'name': 'CryptoTradeTools',
+                'port': self.ports['crypto_trade']
+            },
+            'crypto_price': {
+                'script': 'tool_get_price_crypto.py',
+                'name': 'CryptoPrices',
+                'port': self.ports['crypto_price']
+            },
         }
         
         # Create logs directory

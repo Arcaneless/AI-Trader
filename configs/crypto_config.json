@@ -1,0 +1,30 @@
+{
+  "agent_type": "BaseCryptoAgent",
+  "date_range": {
+    "init_date": "2025-10-01",
+    "end_date": "2025-10-07"
+  },
+  "models": [
+    {
+      "name": "gpt-5-crypto",
+      "basemodel": "openai/gpt-5",
+      "signature": "gpt-5-crypto",
+      "enabled": true
+    }
+  ],
+  "agent_config": {
+    "max_steps": 20,
+    "max_retries": 3,
+    "base_delay": 1.0,
+    "initial_cash": 50000.0
+  },
+  "crypto_agent_config": {
+    "crypto_pair": "BTC/USDT",
+    "history_limit": 200,
+    "timeframe": "1d",
+    "base_symbol": "BTC"
+  },
+  "log_config": {
+    "log_path": "./data/agent_data"
+  }
+}

@@ -198,6 +198,13 @@ AI-Trader Bench/
 #### 🎯 Main Program (`main.py`)
 - **Multi-Model Concurrency**: Run multiple AI models simultaneously for trading
 - **Configuration Management**: Support for JSON configuration files and environment variables
+
+#### ₿ BTC Paper Trading Flow
+- **BaseCryptoAgent**: Drop-in replacement for `BaseAgent` that keeps the MCP orchestration but swaps in ccxt-sourced BTC/USDT data and trade tools. Enable it by setting `agent_type` to `BaseCryptoAgent` (see `configs/crypto_config.json`).
+- **ccxt Data Layer**: `tools/crypto/ccxt_client.py` pulls Hyperliquid-compatible candles and snapshots, while `tools/crypto/price_tools.py` persists them to `data/crypto_history/` for prompts and analytics.
+- **Crypto MCP Tools**: `agent_tools/tool_get_price_crypto.py` and `agent_tools/tool_trade_crypto.py` expose FastMCP services (`CryptoPrices`, `CryptoTradeTools`). The helper script now launches them automatically.
+- **Runtime Env Vars**: `CRYPTO_PAIR`, `CRYPTO_BASE_SYMBOL`, `CRYPTO_TRADE_MODE`, and ccxt API credentials (paper/live) control venue selection without code changes.
+- **Position Compatibility**: Crypto agents continue to write `data/agent_data/<signature>/position/position.jsonl`, so downstream analytics remain untouched.
 - **Date Management**: Flexible trading calendar and date range settings
 - **Error Handling**: Comprehensive exception handling and retry mechanisms
 
